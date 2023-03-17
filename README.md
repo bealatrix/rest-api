@@ -15,7 +15,6 @@ REST API com Node.js feito por Maransatto. <br/>
 Essa API foi desenvolvida com as seguintes tecnologias:
 
 - Node.js
-- JavaScript
 - Git e Github
 - Docker e MySQL(MariaDB)
 
