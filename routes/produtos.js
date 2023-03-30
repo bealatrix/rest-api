@@ -7,22 +7,22 @@ const login = require('../middleware/login');
 const ProdutosController = require('../controllers/produtos-controller');
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb){
+    destination: function (req, file, cb) {
         cb(null, './uploads/');
     },
-    filename: function(req, file, cb){
+    filename: function (req, file, cb) {
         cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
     }
 });
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
         cb(null, true);
-    }else{
+    } else {
         cb(null, false);
     }
 }
 const upload = multer({
-    storage:storage,
+    storage: storage,
     limits: {
         fileSize: 1024 * 1024 * 5
     },
@@ -39,16 +39,16 @@ router.get('/:id_produto', ProdutosController.getUmProduto);
 
 //INSERE UM PRODUTO
 router.post(
-    '/', 
-    login.obrigatorio, 
-    upload.single('produto_imagem'), 
+    '/',
+    login.obrigatorio,
+    upload.single('produto_imagem'),
     ProdutosController.postProdutos
 );
 
 //ALTERA UM PRODUTO
-router.patch('/', login.obrigatorio, ProdutosController.updateProduto);
+router.patch('/:id_produto', login.obrigatorio, ProdutosController.updateProduto);
 
 //EXCLUI UM PRODUTO
-router.delete('/', login.obrigatorio, ProdutosController.deleteProduto);
+router.delete('/:id_produto', login.obrigatorio, ProdutosController.deleteProduto);
 
 module.exports = router;

@@ -9,7 +9,7 @@ const PedidosController = require('../controllers/pedidos-controller');
 router.get('/', PedidosController.getPedidos);
 
 //INSERE UM PEDIDO
-router.post('/:id_pedido', PedidosController.postPedidos);
+router.post('/', PedidosController.postPedidos);
 
 //RETORNA OS DADOS DE UM PEDIDO
 router.get('/:id_pedido', PedidosController.getUmPedido);
