@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
+const multer = require('multer');
+const login = require('../middleware/login');
 
 const PedidosController = require('../controllers/pedidos-controller');
 
@@ -15,6 +16,6 @@ router.post('/', PedidosController.postPedidos);
 router.get('/:id_pedido', PedidosController.getUmPedido);
 
 //EXCLUI UM PEDIDOS
-router.delete('/', PedidosController.deletePedido);
+router.delete('/', login.obrigatorio, PedidosController.deletePedido);
 
 module.exports = router;

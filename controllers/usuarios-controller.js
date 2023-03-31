@@ -67,28 +67,36 @@ exports.loginUsuario = async (req, res, next) => {
     }
 };
 
-
-/*
-
-TENTATIVA DE FAZER UM GET USUARIO PRA RETORNAR OS USUARIOS CADASTRADOS
-
 exports.listarUsuarios = async (req, res, next) => {
     try {
-        const queryConsulUs = 'SELECT * FROM usuarios WHERE email = ?';
-        const resultConsulUs = await mysql.execute(queryConsulUs, [req.body.email]);
+        const resultConsulUs = await mysql.execute("SELECT * FROM usuarios;")
+        
         const response = {
             quantidade: resultConsulUs.length,
-            usuarios: resultConsulUs.map(usuarioCriado => {
+            usuarios: resultConsulUs.map(usuario => {
                 return {
-                    id_usuario: usuarioCriado.id_usuario,
-                    email: usuarioCriado.email,
+                    id_usuario: usuario.id_usuario,
+                    email: usuario.email
                 }
             })
         }
-
         return res.status(200).send(response);
     } catch (error) {
         return res.status(500).send({ error: error });
     }
 };
-*/
+
+exports.deletarUsuario = async (req, res, next) => {
+    try {
+
+        const query = 'DELETE FROM usuarios WHERE id_usuario = ?';
+        const resultDel = await mysql.execute(query, [req.body.id_usuario]);
+
+        const response = {
+            mensagem: 'Usuario removido com sucesso'
+        }
+        return res.status(200).send(response);
+    }catch (error) {
+        return res.status(500).send({ error: error })
+    }
+}
