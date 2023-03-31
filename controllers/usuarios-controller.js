@@ -43,13 +43,13 @@ exports.loginUsuario = async (req, res, next) => {
         const query = `SELECT * FROM usuarios WHERE email = ?`;
         const result = await mysql.execute(query, [req.body.email]);
 
-        if (results.length < 1) {
+        if (result.length < 1) {
             return res.status(401).send({ mensagem: 'Falha na autenticação' });
         }
-        if (await bcrypt.compareSync(req.body.senha, results[0].senha)) {
+        if (await bcrypt.compareSync(req.body.senha, result[0].senha)) {
             const token = jwt.sign({
-                id_usuario: results[0].id_usuario,
-                email: results[0].email,
+                id_usuario: result[0].id_usuario,
+                email: result[0].email,
             }, 
             process.env.JWT_KEY, 
             {
