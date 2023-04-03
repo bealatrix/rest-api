@@ -1,4 +1,5 @@
 <h1 align="center"> REST API </h1>
+<p align="center"> (IN REFACTORING)<p/>
 
 <p align="center">
 REST API com Node.js by Maransatto <br/>
@@ -16,6 +17,7 @@ Essa API foi desenvolvida com as seguintes tecnologias:
 
 - JWT
 - Node.js
+- JavaScript
 - Git e Github
 - Docker e MySQL(MariaDB)
 

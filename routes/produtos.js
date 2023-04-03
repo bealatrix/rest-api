@@ -51,4 +51,11 @@ router.patch('/:id_produto', login.obrigatorio, ProdutosController.updateProduto
 //EXCLUI UM PRODUTO
 router.delete('/:id_produto', login.obrigatorio, ProdutosController.deleteProduto);
 
+router.post(
+    '/:id_produto/imagem', 
+    upload.single('produto_imagem'), 
+    login.obrigatorio,
+    ProdutosController.postImagem
+    );
+
 module.exports = router;

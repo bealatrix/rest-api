@@ -47,6 +47,34 @@ exports.postProdutos = async (req, res, next) => {
                 }
             }
         }
+        return res.status(200).send(response);
+    } catch (error) {
+        return res.status(500).send({ error: error });
+    }
+};
+
+exports.postImagem = async (req, res, next) => {
+    try {
+        const query = 'INSERT INTO imagens_produtos (id_produto, caminho) VALUES (?,?)';
+        const result = mysql.execute(query, [
+            req.params.id_produto,
+            req.body.caminho,
+            req.file.path
+        ]);
+        const response = {
+            mensagem: 'Imagem inserida com sucesso',
+            imagemCriada: {
+                id_produto: req.params.id_produto,
+                id_imagem: result.insertId,
+                caminho: req.body.caminho,
+                imagem_produto: req.file.path
+                /*request: {
+                    tipo: 'GET',
+                    descricao: 'Retorna todos os produtos',
+                    url: 'http://localhost:3000/produtos'
+                }*/
+            }
+        }
 
         return res.status(200).send(response);
     } catch (error) {

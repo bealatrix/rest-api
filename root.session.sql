@@ -1,2 +1,1 @@
-USE ecommerce;
-SELECT * FROM usuarios;
+SELECT * FROM produtos;
