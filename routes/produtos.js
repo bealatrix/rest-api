@@ -56,6 +56,11 @@ router.post(
     upload.single('produto_imagem'), 
     login.obrigatorio,
     ProdutosController.postImagem
-    );
+);
+
+router.get(
+    '/:id_produto/imagens',
+    ProdutosController.getImagens
+);
 
 module.exports = router;
