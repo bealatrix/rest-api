@@ -1,0 +1,1 @@
+SELECT * from imagens_produtos;
