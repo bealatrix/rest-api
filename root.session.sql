@@ -1,7 +1,1 @@
-
 DESCRIBE products;
-
-
-
-
-/*show tables;*/
