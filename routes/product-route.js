@@ -4,7 +4,7 @@ const multer = require('multer');
 const login = require('../middleware/login');
 
 
-const ProdutosController = require('../controllers/produtos-controller');
+const ProdutosController = require('../controllers/product-controller');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -41,7 +41,7 @@ router.get('/:id_produto', ProdutosController.getUmProduto);
 router.post(
     '/',
     login.obrigatorio,
-    upload.single('produto_imagem'),
+    upload.single('image'),
     ProdutosController.postProdutos
 );
 
@@ -52,8 +52,8 @@ router.patch('/:id_produto', login.obrigatorio, ProdutosController.updateProduto
 router.delete('/:id_produto', login.obrigatorio, ProdutosController.deleteProduto);
 
 router.post(
-    '/:id_produto/imagem', 
-    upload.single('produto_imagem'), 
+    '/', 
+    upload.single('image'), 
     login.obrigatorio,
     ProdutosController.postImagem
 );

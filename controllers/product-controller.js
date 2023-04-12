@@ -1,20 +1,20 @@
 const mysql = require('../mysql');
 
-exports.getProdutos = async (req, res, next) => {
+exports.getProducts = async (req, res, next) => {
     try {
-        const result = await mysql.execute("SELECT * FROM produtos;")
+        const result = await mysql.execute("SELECT * FROM products;")
         const response = {
-            quantidade: result.length,
-            produtos: result.map(prod => {
+            quantity: result.length,
+            products: result.map(prod => {
                 return {
-                    id_produto: prod.id_produto,
-                    nome: prod.nome,
-                    preco: prod.preco,
-                    imagem_produto: prod.imagem_produto,
+                    productId: prod.productId,
+                    name: prod.name,
+                    price: prod.price,
+                    productImage: prod.imagem_produto,
                     request: {
-                        tipo: 'GET',
-                        descricao: 'Retorna os detalhes de um produto específico',
-                        url: 'http://localhost:3000/produtos/' + prod.id_produto
+                        type: 'GET',
+                        description: 'Retorna os detalhes de um produto específico',
+                        url: 'http://localhost:3000/products/' + prod.productId
                     }
                 }
             })
@@ -25,35 +25,36 @@ exports.getProdutos = async (req, res, next) => {
     }
 };
 
-exports.postProdutos = async (req, res, next) => {
+exports.postProduct = async (req, res, next) => {
     try {
-        const query = 'INSERT INTO produtos (nome, preco, imagem_produto) VALUES (?,?,?)';
+        const query = 'INSERT INTO products (name, price, productImage) VALUES (?,?,?)';
         const result = await mysql.execute(query, [
-            req.body.nome,
-            req.body.preco,
+            req.body.name,
+            req.body.price,
             req.file.path
         ]);
+
         const response = {
-            mensagem: 'Produto inserido com sucesso',
-            produtoCriado: {
-                id_produto: result.insertId,
-                nome: req.body.nome,
-                preco: req.body.preco,
-                imagem_produto: req.file.path,
+            message: 'Produto inserido com sucesso',
+            createdProduct: {
+                productId: result.insertId,
+                name: req.body.name,
+                price: req.body.price,
+                productImage: req.file.path,
                 request: {
-                    tipo: 'GET',
-                    descricao: 'Retorna todos os produtos',
-                    url: 'http://localhost:3000/produtos'
+                    type: 'GET',
+                    description: 'Retorna todos os produtos',
+                    url: 'http://localhost:3000/products'
                 }
             }
         }
-        return res.status(200).send(response);
+        return res.status(201).send(response);
     } catch (error) {
         return res.status(500).send({ error: error });
     }
 };
 
-exports.getUmProduto = async (req, res, next) => {
+exports.getDetailsProduct = async (req, res, next) => {
     try {
         const query = 'SELECT * FROM produtos WHERE id_produto= ?;';
         const result = await mysql.execute(query, [req.params.id_produto]);

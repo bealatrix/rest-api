@@ -1,1 +1,7 @@
-SELECT * FROM produtos;
+
+DESCRIBE products;
+
+
+
+
+/*show tables;*/

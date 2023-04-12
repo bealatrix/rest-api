@@ -2,9 +2,9 @@ const mysql = require('../mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-exports.cadastrarUsuario = async (req, res, next) => {
+exports.createUser = async (req, res, next) => {
     try {
-        const queryConsulUs = 'SELECT * FROM usuarios WHERE email = ?';
+        const queryConsulUs = 'SELECT * FROM users WHERE email = ?';
         const resultConsulUs = await mysql.execute(queryConsulUs, [req.body.email]);
 
         if (resultConsulUs.length > 0) {
@@ -16,18 +16,18 @@ exports.cadastrarUsuario = async (req, res, next) => {
             bcrypt.hashSync(user.password, 10)
         ])*/
 
-        bcrypt.hash(req.body.senha, 10, async (err, hash) => {
-            if (err) {
-                return res.status(500).send({ error: err });
+        bcrypt.hash(req.body.senha, 10, async (errBcrypt, hash) => {
+            if (errBcrypt) {
+                return res.status(500).send({ error: errBcrypt });
             }
 
-            const queryInser = 'INSERT INTO usuarios (email, senha) VALUES (?,?)';
+            const queryInser = 'INSERT INTO users (email, password) VALUES (?,?)';
             const resultInser = await mysql.execute(queryInser, [req.body.email, hash]);
 
             const response = {
-                mensagem: 'Usuário criado com sucesso',
-                usuarioCriado: {
-                    id_usuario: resultInser.insertId,
+                message: 'Usuário criado com sucesso',
+                createcUsers: {
+                    userId: resultInser.insertId,
                     email: req.body.email
                 }
             };
@@ -38,17 +38,17 @@ exports.cadastrarUsuario = async (req, res, next) => {
     }
 };
 
-exports.loginUsuario = async (req, res, next) => {
+exports.login = async (req, res, next) => {
     try {
-        const query = `SELECT * FROM usuarios WHERE email = ?`;
+        const query = `SELECT * FROM users WHERE email = ?`;
         const result = await mysql.execute(query, [req.body.email]);
 
         if (result.length < 1) {
-            return res.status(401).send({ mensagem: 'Falha na autenticação' });
+            return res.status(401).send({ message: 'Falha na autenticação' });
         }
-        if (await bcrypt.compareSync(req.body.senha, result[0].senha)) {
+        if (await bcrypt.compareSync(req.body.password, result[0].password)) {
             const token = jwt.sign({
-                id_usuario: result[0].id_usuario,
+                userId: result[0].userId,
                 email: result[0].email,
             }, 
             process.env.JWT_KEY, 
@@ -56,7 +56,7 @@ exports.loginUsuario = async (req, res, next) => {
                 expiresIn: "1h"
             });
             return res.status(200).send({
-                mensagem: 'Autenticado com sucesso',
+                message: 'Autenticado com sucesso',
                 token: token
             });
         }
@@ -67,15 +67,15 @@ exports.loginUsuario = async (req, res, next) => {
     }
 };
 
-exports.listarUsuarios = async (req, res, next) => {
+exports.listUsers = async (req, res, next) => {
     try {
-        const resultConsulUs = await mysql.execute("SELECT * FROM usuarios;")
+        const resultConsulUs = await mysql.execute("SELECT * FROM users;")
         
         const response = {
-            quantidade: resultConsulUs.length,
-            usuarios: resultConsulUs.map(usuario => {
+            quantity: resultConsulUs.length,
+            users: resultConsulUs.map(usuario => {
                 return {
-                    id_usuario: usuario.id_usuario,
+                    userId: usuario.userId,
                     email: usuario.email
                 }
             })
@@ -86,16 +86,16 @@ exports.listarUsuarios = async (req, res, next) => {
     }
 };
 
-exports.deletarUsuario = async (req, res, next) => {
+exports.deleteUser = async (req, res, next) => {
     try {
 
-        const query = 'DELETE FROM usuarios WHERE id_usuario = ?';
+        const query = 'DELETE FROM users WHERE userId = ?';
         const resultDel = await mysql.execute(query, [req.body.id_usuario]);
 
         const response = {
-            mensagem: 'Usuario removido com sucesso'
+            message: 'Usuario removido com sucesso'
         }
-        return res.status(200).send(response);
+        return res.status(202).send(response);
     }catch (error) {
         return res.status(500).send({ error: error })
     }
