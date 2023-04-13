@@ -2,37 +2,39 @@ const mysql = require('../mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-exports.createUser = async (req, res, next) => {
+exports.postUser = async (req, res, next) => {
     try {
-        const queryConsulUs = 'SELECT * FROM users WHERE email = ?';
-        const resultConsulUs = await mysql.execute(queryConsulUs, [req.body.email]);
+        var queryUser = 'SELECT * FROM users WHERE email = ?';
+        var result = await mysql.execute(queryUser, [req.body.email]);
 
-        if (resultConsulUs.length > 0) {
-            return res.status(409).send({ mensagem: 'Usuário já cadastrado' });
+        if (result.length > 0) {
+            return res.status(409).send({ message: 'Usuário já cadastrado' });
         }
+        const hash = await bcrypt.hashSync(req.body.password, 10);
+
+        /*bcrypt.hash(req.body.password, 10, async (errBcrypt, hash) => {
+            if (errBcrypt) {
+                return res.status(500).send({ error: errBcrypt });
+            }*/
 
         /*const users = req.body.users.map(user => [
             user.email,
-            bcrypt.hashSync(user.password, 10)
-        ])*/
+            bcrypt.hashSy*/
 
-        bcrypt.hash(req.body.senha, 10, async (errBcrypt, hash) => {
-            if (errBcrypt) {
-                return res.status(500).send({ error: errBcrypt });
+        query = 'INSERT INTO users (email, password) VALUES (?,?)';
+        const results = await mysql.execute(query, [req.body.email, hash]);
+
+        const response = {
+            message: 'Usuário criado com sucesso',
+            createdUsers: {
+                userId: results.insertId,
+                email: req.body.email,
+                hash: hash,
+                password: req.body.password
             }
+        }
 
-            const queryInser = 'INSERT INTO users (email, password) VALUES (?,?)';
-            const resultInser = await mysql.execute(queryInser, [req.body.email, hash]);
-
-            const response = {
-                message: 'Usuário criado com sucesso',
-                createcUsers: {
-                    userId: resultInser.insertId,
-                    email: req.body.email
-                }
-            };
-            return res.status(201).send(response);
-        });
+        return res.status(201).send(response);
     } catch (error) {
         return res.status(500).send({ error: error });
     }
@@ -41,7 +43,7 @@ exports.createUser = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const query = `SELECT * FROM users WHERE email = ?`;
-        const result = await mysql.execute(query, [req.body.email]);
+        var result = await mysql.execute(query, [req.body.email]);
 
         if (result.length < 1) {
             return res.status(401).send({ message: 'Falha na autenticação' });
@@ -50,11 +52,11 @@ exports.login = async (req, res, next) => {
             const token = jwt.sign({
                 userId: result[0].userId,
                 email: result[0].email,
-            }, 
-            process.env.JWT_KEY, 
-            {
-                expiresIn: "1h"
-            });
+            },
+                process.env.JWT_KEY,
+                {
+                    expiresIn: "1h"
+                });
             return res.status(200).send({
                 message: 'Autenticado com sucesso',
                 token: token
@@ -70,13 +72,13 @@ exports.login = async (req, res, next) => {
 exports.listUsers = async (req, res, next) => {
     try {
         const resultConsulUs = await mysql.execute("SELECT * FROM users;")
-        
+
         const response = {
             quantity: resultConsulUs.length,
-            users: resultConsulUs.map(usuario => {
+            users: resultConsulUs.map(user => {
                 return {
-                    userId: usuario.userId,
-                    email: usuario.email
+                    userId: user.userId,
+                    email: user.email
                 }
             })
         }
@@ -88,15 +90,23 @@ exports.listUsers = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
     try {
+        var queryUser = 'SELECT * FROM users WHERE userId = ?';
+        var result = await mysql.execute(queryUser, [req.body.userId]);
+        
+        console.log(result); 
+         if (result.length === 0) {
+             return res.status(409).send({ message: 'Usuário não encontrado' });
+         }
+ 
+         var query = 'DELETE FROM users WHERE userId = ?';
+         var resultDel = await mysql.execute(query, [req.body.userId]);
+ 
+         const response = {
+             message: 'Usuario removido com sucesso'
+         }
 
-        const query = 'DELETE FROM users WHERE userId = ?';
-        const resultDel = await mysql.execute(query, [req.body.id_usuario]);
-
-        const response = {
-            message: 'Usuario removido com sucesso'
-        }
         return res.status(202).send(response);
-    }catch (error) {
+    } catch (error) {
         return res.status(500).send({ error: error })
     }
 }

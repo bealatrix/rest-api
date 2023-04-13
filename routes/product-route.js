@@ -42,7 +42,7 @@ router.post(
 
 router.patch('/:productId', login.required, ProductsController.updateProduct);
 
-router.delete('/:productId', login.required, ProductsController.deleteProduct);
+router.delete('/delete', login.required, ProductsController.deleteProduct);
 
 router.post(
     '/', 

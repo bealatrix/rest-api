@@ -105,9 +105,16 @@ exports.getOrderDetail = async (req, res, next) => {
 
 exports.deleteOrder = async (req, res, next) => {
     try {
+        var queryOrd = 'SELECT * FROM orders WHERE orderId = ?';
+        var result = await mysql.execute(queryOrd, [req.body.orderId]);
+        
+        console.log(result); 
+         if (result.length === 0) {
+             return res.status(409).send({ message: 'Pedido não encontrado' });
+        }
 
-        const query = 'DELETE FROM orders WHERE orderId = ?';
-        await mysql.execute(query, [req.params.orderId]);
+        var query = 'DELETE FROM orders WHERE orderId = ?';
+        var resultOrd = await mysql.execute(query, [req.params.orderId]);
 
         const response = {
             message: 'Pedido removido com sucesso',

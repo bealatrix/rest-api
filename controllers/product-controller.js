@@ -106,7 +106,7 @@ exports.updateProduct = async (req, res, next) => {
                 request: {
                     type: 'GET',
                     description: 'Retorna os detalhes de um produto específico',
-                    url: 'http://localhost:3000/produtos/' + req.body.id_produto
+                    url: 'http://localhost:3000/products/' + req.body.id_produto
                 }
             }
         }
@@ -118,9 +118,16 @@ exports.updateProduct = async (req, res, next) => {
 
 exports.deleteProduct = async (req, res, next) => {
     try {
+        var queryProd = 'SELECT * FROM products WHERE productId = ?';
+        var result = await mysql.execute(queryProd, [req.body.productId]);
+        
+        console.log(result); 
+         if (result.length === 0) {
+             return res.status(409).send({ message: 'Produto não encontrado' });
+        }
 
-        const query = 'DELETE FROM product WHERE productId = ?';
-        await mysql.execute(query, [req.body.productId]);
+        var query = 'DELETE FROM product WHERE productId = ?';
+        var resultDel = mysql.execute(query, [req.body.productId]);
 
         const response = {
             message: 'Produto removido com sucesso',

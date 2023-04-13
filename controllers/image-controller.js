@@ -2,9 +2,16 @@ const mysql = require('../mysql');
 
 exports.deleteImage = async (req, res, next) => {
     try {
+        var queryIma = 'SELECT * FROM productImages WHERE imageId = ?';
+        var result = await mysql.execute(queryIma, [req.body.imageId]);
+        
+        console.log(result); 
+         if (result.length === 0) {
+             return res.status(409).send({ message: 'Imagem não encontrado' });
+        }
 
-        const query = 'DELETE FROM productImages WHERE imageId = ?';
-        await mysql.execute(query, [req.params.imageId]);
+        var query = 'DELETE FROM productImages WHERE imageId = ?';
+        var resultIma = await mysql.execute(query, [req.params.imageId]);
 
         const response = {
             message: 'Imagem removida com sucesso',

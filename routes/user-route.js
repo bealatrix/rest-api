@@ -1,15 +1,13 @@
+
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const login = require('../middleware/login');
 
+const userController = require('../controllers/user-controller');
 
-const UsuarioController = require('../controllers/user-controller');
-
-router.delete('/delete', login.obrigatorio, UsuarioController.deleteUser);
-router.post('/create', UsuarioController.createUser);
-router.get('/users', login.obrigatorio, UsuarioController.listUsers);
-router.post('/login', UsuarioController.login);
-
+router.delete('/delete', login.required, userController.deleteUser);
+router.post('/create', userController.postUser);
+router.get('/', userController.listUsers);
+router.post('/login', userController.login);
 
 module.exports = router;
