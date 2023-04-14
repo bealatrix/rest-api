@@ -67,9 +67,9 @@ exports.getProductDetail = async (req, res, next) => {
 
         const response = {
             product: {
-                productId: result[0].id_produto,
-                name: result[0].nome,
-                price: result[0].preco,
+                productId: result[0].productId,
+                name: result[0].name,
+                price: result[0].price,
                 productImage: result[0].productImage,
                 request: {
                     type: 'GET',
@@ -87,12 +87,20 @@ exports.getProductDetail = async (req, res, next) => {
 
 exports.updateProduct = async (req, res, next) => {
     try {
-        const query = `UPDATE products 
+        var queryProd = 'SELECT * FROM products WHERE productId = ?';
+        var result = await mysql.execute(queryProd, [req.body.productId]);
+        
+        console.log(result); 
+         if (result.length === 0) {
+             return res.status(409).send({ message: 'Produto não encontrado' });
+        }
+
+        var query = `UPDATE products 
                           SET name        = ?, 
                               price       = ? 
                         WHERE productId  = ?`;
 
-        await mysql.execute(query, [
+        var resultUp =await mysql.execute(query, [
             req.body.name,
             req.body.price,
             req.body.productId]);
@@ -100,13 +108,13 @@ exports.updateProduct = async (req, res, next) => {
         const response = {
             message: 'Produto atualizado com sucesso',
             updateProduct: {
-                productId: req.body.id_produto,
+                productId: req.body.productId,
                 name: req.body.name,
                 price: req.body.price,
                 request: {
                     type: 'GET',
                     description: 'Retorna os detalhes de um produto específico',
-                    url: 'http://localhost:3000/products/' + req.body.id_produto
+                    url: 'http://localhost:3000/products/' + req.body.productId
                 }
             }
         }
